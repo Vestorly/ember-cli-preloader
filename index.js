@@ -28,6 +28,10 @@ module.exports = {
   },
 
   contentFor: function(name, config) {
+    if (config.environment === 'test') {
+      return;
+    }
+
     if (name === 'body') {
       var htmlPath = this.addonPaths['html'] || 'app/preloader/preloader.html';
 
