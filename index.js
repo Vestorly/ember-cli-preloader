@@ -17,14 +17,14 @@ function getInjectionFor(type, filePath) {
 module.exports = {
   name: 'ember-cli-preloader',
 
-  isDevelopingAddon: function() {
-    return true;
-  },
-
   included: function(app) {
     this.app = app;
     this.addonOptions = app.options['ember-cli-preloader'] || {};
     this.addonPaths = this.addonOptions['paths'] || {};
+
+    if (typeof this.addonOptions.enabled === 'undefined') {
+      this.addonOptions.enabled = true;
+    }
   },
 
   contentFor: function(name, config) {
@@ -34,7 +34,7 @@ module.exports = {
       return getInjectionFor.call(this, 'div', htmlPath);
     }
 
-    if (name === 'head-footer') {
+    if (this.addonOptions.enabled && name === 'head-footer') {
       var cssPath = this.addonPaths['css'] || 'app/preloader/preloader.css';
 
       return getInjectionFor.call(this, 'style', cssPath);
