@@ -1,13 +1,13 @@
 machine:
   timezone: America/New_York
   node:
-    version: 0.12.0
+    version: 6.1.0
 
 dependencies:
   pre:
     - npm config set spin false
     - npm install -g bower
-    - npm install -g ember-cli@1.13.8
+    - npm install -g ember-cli@2.10.1
   override:
     - npm install --debug
   post:
@@ -15,7 +15,7 @@ dependencies:
 
   cache_directories:
     - "node_modules"
-    - "~/nvm/versions/node/v0.12.0/lib/node_modules"
+    - "~/nvm/versions/node/v6.1.0/lib/node_modules"
 test:
   override:
     - ember test
