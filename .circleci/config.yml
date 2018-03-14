@@ -1,0 +1,58 @@
+version: 2
+jobs:
+  checkout_and_install:
+    docker:
+      - image: circleci/node:6.13.0-browsers
+    steps:
+      - add_ssh_keys
+      - restore_cache:
+          keys:
+            - source-cache-{{ .Branch }}-{{ .Revision }}
+            - source-cache-{{ .Branch }}-
+            - source-cache-
+      - checkout
+      - save_cache:
+          key: source-cache-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .git
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ .Branch }}-{{ checksum "package.json" }}
+            - dependencies-cache-{{ .Branch }}
+      - run: echo 'export PATH=node_modules/.bin:$PATH' >> $BASH_ENV
+      - run: npm config set spin false
+      - run: npm install bower
+      - run: npm install ember-cli@2.10.1
+      - run: npm install --debug
+      - run: bower install --allow-root
+      - save_cache:
+          key: dependencies-cache-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+            - bower_components
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  tests:
+    docker:
+      - image: circleci/node:6.13.0-browsers
+    steps:
+      - attach_workspace:
+          at: .
+      - add_ssh_keys
+      - run: echo 'export PATH=node_modules/.bin:$PATH' >> $BASH_ENV
+      - run:
+          name: Run tests.
+          command: ember test
+
+workflows:
+  version: 2
+  test-and-deploy:
+    jobs:
+      - checkout_and_install
+
+      - tests:
+          requires:
+            - checkout_and_install
