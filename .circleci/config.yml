@@ -2,8 +2,9 @@ version: 2
 jobs:
   checkout_and_install:
     docker:
-      - image: circleci/node:6.13.0
+      - image: circleci/node:6.13.0-browsers
     steps:
+      - add_ssh_keys
       - restore_cache:
           keys:
             - source-cache-{{ .Branch }}-{{ .Revision }}
@@ -36,7 +37,7 @@ jobs:
 
   tests:
     docker:
-      - image: circleci/node:6.13.0
+      - image: circleci/node:6.13.0-browsers
     steps:
       - attach_workspace:
           at: .
